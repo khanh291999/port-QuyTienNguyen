@@ -37,21 +37,53 @@
     document.getElementById('metaType').textContent = project.tag.split('/')[0].trim();
     document.getElementById('metaDate').textContent = 'Q2 2025';
 
-    // Images
+    // Hero image (first image)
+    const heroContainer = document.getElementById('projectHero');
+    if (project.images.length > 0) {
+        const heroImg = document.createElement('img');
+        heroImg.src = project.images[0];
+        heroImg.alt = project.title + ' — Cover';
+        heroImg.loading = 'eager';
+        heroContainer.appendChild(heroImg);
+        heroContainer.style.cursor = 'pointer';
+        heroContainer.dataset.index = 0;
+    }
+
+    // Hero caption
+    const captions = project.captions || [];
+    if (captions[0]) {
+        const heroCaption = document.createElement('p');
+        heroCaption.className = 'project-img-caption';
+        heroCaption.textContent = captions[0];
+        heroContainer.parentNode.appendChild(heroCaption);
+    }
+
+    // Gallery images (remaining images)
     const imagesContainer = document.getElementById('projectImages');
-    project.images.forEach((src, i) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'project-img-wrap';
-        wrapper.dataset.index = i;
+    if (project.images.length > 1) {
+        project.images.slice(1).forEach((src, i) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'project-img-wrap';
+            wrapper.dataset.index = i + 1;
 
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = project.title + ' - Image ' + (i + 1);
-        img.loading = i === 0 ? 'eager' : 'lazy';
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = project.title + ' - Image ' + (i + 2);
+            img.loading = 'lazy';
 
-        wrapper.appendChild(img);
-        imagesContainer.appendChild(wrapper);
-    });
+            wrapper.appendChild(img);
+
+            // Caption under each gallery image
+            if (captions[i + 1]) {
+                const caption = document.createElement('p');
+                caption.className = 'project-img-caption';
+                caption.textContent = captions[i + 1];
+                wrapper.appendChild(caption);
+            }
+
+            imagesContainer.appendChild(wrapper);
+        });
+    }
 
     // Prev / Next navigation
     const prevIndex = currentIndex > 0 ? currentIndex - 1 : projectsData.length - 1;
@@ -114,6 +146,12 @@
         lightboxImg.src = project.images[currentLightboxIndex];
     }
 
+    // Hero image click for lightbox
+    heroContainer.addEventListener('click', () => {
+        openLightbox(0);
+    });
+
+    // Gallery image clicks for lightbox
     imagesContainer.addEventListener('click', (e) => {
         const wrapper = e.target.closest('.project-img-wrap');
         if (wrapper) {
@@ -147,6 +185,15 @@
         });
     }, { threshold: 0.08 });
 
+    // Reveal animation for hero image
+    if (heroContainer) {
+        heroContainer.style.opacity = '0';
+        heroContainer.style.transform = 'translateY(24px)';
+        heroContainer.style.transition = 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        imgObserver.observe(heroContainer);
+    }
+
+    // Reveal animation for gallery images
     document.querySelectorAll('.project-img-wrap').forEach((el, i) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(24px)';
