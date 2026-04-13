@@ -6,7 +6,7 @@
 const revealElements = document.querySelectorAll('.reveal, .about-section, .benefits-section, .case-studies, .methodology-section, .services-section');
 
 function addRevealClass(el) {
-    el.querySelectorAll('.section-label, .section-heading, .section-subtext, .about-grid, .about-text-large, .about-detail, .benefits-grid, .cs-subtext-row, .cases-grid, .method-steps, .method-actions, .services-content, .stats-row, .benefit-card, .case-card, .method-step, .stat-item').forEach(child => {
+    el.querySelectorAll('.section-label, .section-heading, .section-subtext, .about-grid, .about-text-large, .about-detail, .benefits-grid, .cs-subtext-row, .method-steps, .method-actions, .services-content, .stats-row, .benefit-card, .case-card, .method-step, .stat-item').forEach(child => {
         if (!child.classList.contains('reveal')) {
             child.classList.add('reveal');
         }
